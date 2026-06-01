@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Placement Sheet Generator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="loading"><div class="spinner"></div><div class="loading-text">Generating…</div></div>
+<div id="toast"></div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sb-head">
+    <img class="sb-dks" src="assets/dks_logo.png" alt="DICK'S Sporting Goods">
+    <div class="sb-title">Placement Sheet<br>Generator</div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-title">Upload Images</div>
+
+    <label class="upload-zone" id="uz-artwork" data-target="artwork">
+      <input type="file" accept="image/*" data-target="artwork">
+      <div class="uz-top">
+        <span class="uz-icon">🎨</span>
+        <span class="uz-label">Artwork (AW)</span>
+      </div>
+      <img class="uz-preview" id="prev-artwork" src="" alt="">
+      <div class="uz-ph" id="ph-artwork">Drop or click to upload</div>
+      <div class="uz-fname" id="fn-artwork"></div>
+    </label>
+
+    <label class="upload-zone" id="uz-color" data-target="color">
+      <input type="file" accept="image/*" data-target="color">
+      <div class="uz-top">
+        <span class="uz-icon">🎨</span>
+        <span class="uz-label">Color Swatch</span>
+      </div>
+      <img class="uz-preview" id="prev-color" src="" alt="">
+      <div class="uz-ph" id="ph-color">Drop or click to upload</div>
+      <div class="uz-fname" id="fn-color"></div>
+    </label>
+
+    <label class="upload-zone" id="uz-style" data-target="style">
+      <input type="file" accept="image/*" data-target="style">
+      <div class="uz-top">
+        <span class="uz-icon">👕</span>
+        <span class="uz-label">Style Reference</span>
+      </div>
+      <img class="uz-preview" id="prev-style" src="" alt="">
+      <div class="uz-ph" id="ph-style">Drop or click to upload</div>
+      <div class="uz-fname" id="fn-style"></div>
+    </label>
+
+    <label class="upload-zone" id="uz-placement" data-target="placement">
+      <input type="file" accept="image/*" data-target="placement">
+      <div class="uz-top">
+        <span class="uz-icon">📐</span>
+        <span class="uz-label">2D Placement Diagram</span>
+      </div>
+      <img class="uz-preview" id="prev-placement" src="" alt="">
+      <div class="uz-ph" id="ph-placement">Drop or click to upload</div>
+      <div class="uz-fname" id="fn-placement"></div>
+    </label>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-title">Column Width</div>
+    <div class="slider-row">
+      <div class="sl-label">Left <span id="lv-left">1.0</span></div>
+      <input type="range" id="sl-left" min="0.4" max="2.2" step="0.05" value="1.0">
+    </div>
+    <div class="slider-row">
+      <div class="sl-label">Middle <span id="lv-mid">1.15</span></div>
+      <input type="range" id="sl-mid" min="0.4" max="2.2" step="0.05" value="1.15">
+    </div>
+    <div class="slider-row">
+      <div class="sl-label">Right <span id="lv-right">0.6</span></div>
+      <input type="range" id="sl-right" min="0.2" max="1.6" step="0.05" value="0.6">
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-title">Export</div>
+    <button class="btn btn-jpg" onclick="exportJPG()">🖼 Download JPG</button>
+    <button class="btn btn-pdf" onclick="exportPDF()">📄 Download PDF</button>
+    <button class="btn btn-reset" onclick="resetAll()">↺ Reset All</button>
+  </div>
+
+  <div class="sb-footer">
+    Click any text on the sheet to edit it
+  </div>
+</aside>
+
+<!-- MAIN PREVIEW -->
+<main id="main">
+  <div class="main-label">Live Preview — click any text to edit</div>
+
+  <div id="sheet-outer">
+  <div id="sheet">
+
+    <div class="top-bar">
+      <img class="dks-logo" src="assets/dks_logo.png" alt="DICK'S Sporting Goods">
+      <div class="doc-title" contenteditable="true">Artwork Placement Specification</div>
+    </div>
+
+    <div class="header-panels" id="headerPanels">
+
+      <!-- LEFT -->
+      <div class="panel">
+        <div class="art-name" contenteditable="true">IOWAxDSG_FA26_LEFT CHEST_ATHLETIC HAWKEYE LOGO_PURE WHITE HEATHER-LEMON CHROME-PURE BLACK_V1</div>
+        <div class="artwork-row">
+          <div class="aw-img-wrap">
+            <img class="artwork-thumb" id="img-artwork" src="" alt="" style="display:none">
+            <div class="img-ph" id="ph-artwork-sheet">AW Image</div>
+          </div>
+          <div class="color-swatch-wrap">
+            <img class="color-swatch-img" id="img-color" src="" alt="" style="display:none">
+            <div class="img-ph" id="ph-color-sheet">Color Swatch</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MIDDLE -->
+      <div class="panel">
+        <div class="spec-heading">Artwork Size</div>
+        <div class="size-rows">
+          <div class="size-row">
+            <span class="size-lbl" contenteditable="true">XXS, XS, S:</span>
+            <span contenteditable="true">1.99&Prime; Wide &times; 1.41&Prime; High</span>
+          </div>
+          <div class="size-row">
+            <span class="size-lbl" contenteditable="true">M, L, XL:</span>
+            <span contenteditable="true">2.17&Prime; Wide &times; 1.57&Prime; High</span>
+          </div>
+        </div>
+        <div class="tol-warn" contenteditable="true">Need 1/8&Prime; Placement Tolerance</div>
+        <table class="tol-table">
+          <thead><tr>
+            <th contenteditable="true">TOL (+/-1/8&Prime;)</th>
+            <th contenteditable="true">XXS</th>
+            <th contenteditable="true">XS</th>
+            <th contenteditable="true">S</th>
+            <th contenteditable="true">M</th>
+            <th contenteditable="true">L</th>
+            <th contenteditable="true">XL</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td contenteditable="true">Below CF Neck</td>
+              <td contenteditable="true">1 3/4&Prime;</td>
+              <td contenteditable="true">1 3/4&Prime;</td>
+              <td contenteditable="true">2&Prime;</td>
+              <td contenteditable="true">2&Prime;</td>
+              <td contenteditable="true">2 1/4&Prime;</td>
+              <td contenteditable="true">2 1/4&Prime;</td>
+            </tr>
+            <tr>
+              <td contenteditable="true">From CF Placket</td>
+              <td contenteditable="true">1 1/2&Prime;</td>
+              <td contenteditable="true">1 1/2&Prime;</td>
+              <td contenteditable="true">1 3/4&Prime;</td>
+              <td contenteditable="true">1 3/4&Prime;</td>
+              <td contenteditable="true">2&Prime;</td>
+              <td contenteditable="true">2&Prime;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="style-panel">
+        <div class="style-lbl">Style Reference</div>
+        <img class="style-photo" id="img-style" src="" alt="" style="display:none">
+        <div class="img-ph tall" id="ph-style-sheet">Style Photo</div>
+      </div>
+
+    </div>
+
+    <div class="style-title-row">
+      <span class="style-title" contenteditable="true">IOWDAY01</span>
+      <span class="style-sub" contenteditable="true">(NO seam allowance)</span>
+    </div>
+
+    <img class="placement-diagram" id="img-placement" src="" alt="" style="display:none">
+    <div class="img-ph placement-ph" id="ph-placement-sheet">Upload 2D Placement Diagram</div>
+
+    <div class="sheet-footer">
+      <div class="footer-l" contenteditable="true">Makalot Group &nbsp;|&nbsp; DSG Placement Spec</div>
+      <div class="footer-r" contenteditable="true">FA26 Season</div>
+    </div>
+
+  </div>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
